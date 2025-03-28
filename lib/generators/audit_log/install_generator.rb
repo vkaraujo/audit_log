@@ -1,4 +1,5 @@
-# lib/generators/audit_log/install_generator.rb
+# frozen_string_literal: true
+
 require "rails/generators"
 
 module AuditLog
