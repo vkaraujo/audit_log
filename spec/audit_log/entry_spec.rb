@@ -2,6 +2,24 @@
 require "spec_helper"
 
 RSpec.describe AuditLog::Entry do
+  before do
+    # Create the audit_log_entries table in memory
+    ActiveRecord::Schema.define do
+      suppress_messages do
+        create_table :audit_log_entries, force: true do |t|
+          t.string :auditable_type
+          t.bigint :auditable_id
+          t.string :action
+          t.json :changed_data
+          t.string :reason
+          t.string :actor_type
+          t.bigint :actor_id
+          t.timestamps
+        end
+      end
+    end
+  end
+
   it "has a valid factory or can be created manually" do
     entry = described_class.new(
       auditable_type: "Post",
@@ -24,3 +42,4 @@ RSpec.describe AuditLog::Entry do
     expect(entry.errors[:action]).to include("can't be blank")
   end
 end
+
