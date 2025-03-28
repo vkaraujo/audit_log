@@ -1,6 +1,13 @@
 # frozen_string_literal: true
 
 require "audit_log"
+require "active_record"
+
+# Establish in-memory SQLite database connection for testing
+ActiveRecord::Base.establish_connection(
+  adapter: "sqlite3",
+  database: ":memory:"
+)
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
@@ -12,4 +19,9 @@ RSpec.configure do |config|
   config.expect_with :rspec do |c|
     c.syntax = :expect
   end
+end
+
+AuditLog.configure do |config|
+  config.actor_method = :current_user
+  config.ignored_attributes = ["updated_at"]
 end
