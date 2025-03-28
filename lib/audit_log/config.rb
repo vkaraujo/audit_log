@@ -7,6 +7,10 @@ module AuditLog
       self.configuration ||= Configuration.new
       yield(configuration)
     end
+
+    def reset_configuration!
+      self.configuration = Configuration.new
+    end
   end
 
   class Configuration

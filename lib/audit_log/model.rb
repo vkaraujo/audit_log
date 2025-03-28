@@ -30,7 +30,7 @@ module AuditLog
       included do
         # Add model lifecycle callbacks for auditing
         after_create  :log_audit_create
-        before_update :log_audit_update
+        after_update  :log_audit_update
         before_destroy :log_audit_destroy
       end
 
@@ -39,7 +39,7 @@ module AuditLog
       # Called after a record is created
       # Logs all initial attributes
       def log_audit_create
-        create_audit_entry("create", changes_to_save)
+        create_audit_entry("create", saved_changes.except(*ignored_audit_attrs))
       end
 
       # Called before a record is updated
@@ -69,7 +69,13 @@ module AuditLog
 
       # Builds the list of attributes to ignore when logging
       def ignored_audit_attrs
-        ["updated_at"] + Array(audit_log_options[:except])
+        if audit_log_options[:only].any?
+          # Only track the specified attributes; ignore all others
+          attribute_names - audit_log_options[:only]
+        else
+          # Ignore what's in `except:` + global ignored config
+          Array(audit_log_options[:except]) + AuditLog.configuration.ignored_attributes
+        end
       end
     end
   end

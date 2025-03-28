@@ -1,4 +1,6 @@
-# lib/audit_log/entry.rb
+# frozen_string_literal: true
+require "active_record"
+
 module AuditLog
   class Entry < ActiveRecord::Base
     self.table_name = "audit_log_entries"
@@ -6,7 +8,7 @@ module AuditLog
     belongs_to :auditable, polymorphic: true
     belongs_to :actor, polymorphic: true, optional: true
 
-    serialize :changed_data, JSON
+    # serialize :changed_data, coder: JSON
 
     validates :action, presence: true
     validates :auditable_type, :auditable_id, presence: true
