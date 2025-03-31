@@ -1,3 +1,5 @@
+[![Gem Version](https://badge.fury.io/rb/audit_log.svg)](https://badge.fury.io/rb/audit_log)
+
 # AuditLog
 
 A lightweight, Rails-friendly audit logging gem to track model changes (`create`, `update`, `destroy`) with contextual metadata like `actor` and `reason`. Perfect for admin panels, SaaS apps, and audit trails.
