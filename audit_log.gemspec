@@ -3,7 +3,7 @@
 require_relative "lib/audit_log/version"
 
 Gem::Specification.new do |spec|
-  spec.name = "audit_log"
+  spec.name = "audit_log_vk"
   spec.version = AuditLog::VERSION
   spec.authors = ["viktor"]
   spec.email = ["araujo"]
