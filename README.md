@@ -20,8 +20,7 @@ A lightweight, Rails-friendly audit logging gem to track model changes (`create`
 Add this line to your application's Gemfile:
 
 ```ruby
-gem "audit_log", path: "path/to/your/local/gem" 
-# or gem "audit_log" if published
+gem "audit_log_vk"
 ```
 Then run:
 ```ruby
