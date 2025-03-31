@@ -5,7 +5,7 @@ RSpec.describe AuditLog do
     expect(AuditLog::VERSION).not_to be nil
   end
 
-  it "does something useful" do
-    expect(false).to eq(true)
+  it "is configurable" do
+    expect { AuditLog.configure {} }.not_to raise_error
   end
 end
