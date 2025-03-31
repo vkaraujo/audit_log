@@ -1,4 +1,5 @@
-[![Gem Version](https://badge.fury.io/rb/audit_log.svg)](https://badge.fury.io/rb/audit_log)
+[![Gem Version](https://badge.fury.io/rb/audit_log_vk.svg)](https://rubygems.org/gems/audit_log_vk)
+
 
 # AuditLog
 
