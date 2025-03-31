@@ -1,39 +1,121 @@
 # AuditLog
 
-TODO: Delete this and the text below, and describe your gem
+A lightweight, Rails-friendly audit logging gem to track model changes (`create`, `update`, `destroy`) with contextual metadata like `actor` and `reason`. Perfect for admin panels, SaaS apps, and audit trails.
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/audit_log`. To experiment with that code, run `bin/console` for an interactive prompt.
+---
 
-## Installation
+## ✨ Features
 
-TODO: Replace `UPDATE_WITH_YOUR_GEM_NAME_PRIOR_TO_RELEASE_TO_RUBYGEMS_ORG` with your gem name right after releasing it to RubyGems.org. Please do not do it earlier due to security reasons. Alternatively, replace this section with instructions to install your gem from git if you don't plan to release to RubyGems.org.
+- Track `create`, `update`, and `destroy` events on any model  
+- Store changes in an `audit_log_entries` table  
+- Associate logs with the user (or any actor) who made the change  
+- Optional `reason` for change  
+- Configurable `only:` and `except:` fields  
+- Easy to install and integrate
 
-Install the gem and add to the application's Gemfile by executing:
+---
 
-    $ bundle add UPDATE_WITH_YOUR_GEM_NAME_PRIOR_TO_RELEASE_TO_RUBYGEMS_ORG
+## 🔧 Installation
 
-If bundler is not being used to manage dependencies, install the gem by executing:
+Add this line to your application's Gemfile:
 
-    $ gem install UPDATE_WITH_YOUR_GEM_NAME_PRIOR_TO_RELEASE_TO_RUBYGEMS_ORG
+```ruby
+gem "audit_log", path: "path/to/your/local/gem" 
+# or gem "audit_log" if published
+```
+Then run:
+```ruby
+bundle install
+```
+Install the initializer and migration:
+```ruby
+bin/rails generate audit_log:install
+bin/rails db:migrate
+```
 
-## Usage
+## 🚀 Usage
 
-TODO: Write usage instructions here
+### 1. Include the concern in your model:
 
-## Development
+```ruby
+class Post < ApplicationRecord
+  include AuditLog::Model
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+  audited
+end
+```
+You can optionally limit or exclude tracked attributes:
+```ruby
+audited only: [:title, :status]         # Only track these fields
+audited except: [:updated_at, :synced]  # Track everything but these
+```
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and the created tag, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+### 2. Set the actor (who made the change):
+In your controller (e.g. ApplicationController):
+```ruby
+before_action do
+  AuditLog::Context.actor = current_user
+end
+```
+You can configure the method name (current_user) in the initializer.
+
+### 3. Optionally set a reason:
+You can set a reason for changes anywhere in your code:
+```ruby
+AuditLog::Context.with(reason: "bulk import") do
+  post.update!(status: "archived")
+end
+```
+
+## ⚙️ Configuration
+Generated initializer at config/initializers/audit_log.rb:
+```ruby
+AuditLog.configure do |config|
+  config.actor_method = :current_user
+  config.ignored_attributes = ["updated_at"]
+end
+```
+
+## 🧪 Testing in your app
+Use AuditLog::Entry to inspect audit logs:
+```ruby
+AuditLog::Entry.for_model(post).order(created_at: :desc)
+```
+
+## 📦 Entry Table Schema
+The install generator includes a migration that creates:
+```ruby
+create_table :audit_log_entries do |t|
+  t.string  :auditable_type
+  t.bigint  :auditable_id
+  t.string  :action
+  t.json    :changed_data
+  t.string  :reason
+  t.string  :actor_type
+  t.bigint  :actor_id
+  t.timestamps
+end
+```
+
+## ✅ Development
+This gem uses rspec and an in-memory SQLite DB to test audit hooks.
+
+Run specs with:
+```ruby
+bundle exec rspec
+```
+
 
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/audit_log. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/[USERNAME]/audit_log/blob/master/CODE_OF_CONDUCT.md).
 
-## License
+## 📄 License
 
 The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
 
-## Code of Conduct
+## 🙌 Credits
 
-Everyone interacting in the AuditLog project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/[USERNAME]/audit_log/blob/master/CODE_OF_CONDUCT.md).
+Created with by Viktor Araújo.
+
+Inspired by open-source audit trail gems like PaperTrail, Audited, and others — but lighter and more simple.
