@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require "active_record"
 
 module AuditLog
@@ -7,8 +8,6 @@ module AuditLog
 
     belongs_to :auditable, polymorphic: true
     belongs_to :actor, polymorphic: true, optional: true
-
-    # serialize :changed_data, coder: JSON
 
     validates :action, presence: true
     validates :auditable_type, :auditable_id, presence: true

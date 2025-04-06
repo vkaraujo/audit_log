@@ -1,4 +1,5 @@
-# lib/audit_log/context.rb
+# frozen_string_literal: true
+
 module AuditLog
   class Context
     THREAD_KEY = :audit_log_context

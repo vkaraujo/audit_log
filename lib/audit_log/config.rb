@@ -1,4 +1,5 @@
-# lib/audit_log/config.rb
+# frozen_string_literal: true
+
 module AuditLog
   class << self
     attr_accessor :configuration

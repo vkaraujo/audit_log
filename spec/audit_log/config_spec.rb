@@ -1,4 +1,5 @@
-# spec/audit_log/config_spec.rb
+# frozen_string_literal: true
+
 require "spec_helper"
 
 RSpec.describe AuditLog do
@@ -7,11 +8,11 @@ RSpec.describe AuditLog do
   it "allows configuration of actor_method and ignored_attributes" do
     described_class.configure do |config|
       config.actor_method = :current_admin
-      config.ignored_attributes = ["updated_at", "synced_at"]
+      config.ignored_attributes = %w[updated_at synced_at]
     end
 
     expect(described_class.configuration.actor_method).to eq(:current_admin)
-    expect(described_class.configuration.ignored_attributes).to eq(["updated_at", "synced_at"])
+    expect(described_class.configuration.ignored_attributes).to eq(%w[updated_at synced_at])
   end
 
   it "has sensible default values" do

@@ -1,13 +1,14 @@
-# lib/audit_log/helpers.rb
+# frozen_string_literal: true
+
 module AuditLog
   module Helpers
-    # Executes a block with the given audit context
+    # Sets temporary audit context (actor and reason) for the duration of the block.
     #
     # Example:
-    #   AuditLog.with_context(actor: current_user, reason: "Batch update") do
+    #   AuditLog::Helpers.with_context(actor: current_user, reason: "Batch update") do
     #     user.update!(name: "New")
     #   end
-    #
+
     def self.with_context(actor: nil, reason: nil)
       AuditLog::Context.actor = actor
       AuditLog::Context.reason = reason

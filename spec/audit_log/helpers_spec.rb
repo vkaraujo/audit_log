@@ -1,4 +1,5 @@
-# spec/audit_log/helpers_spec.rb
+# frozen_string_literal: true
+
 require "spec_helper"
 
 RSpec.describe AuditLog::Helpers do
@@ -13,7 +14,8 @@ RSpec.describe AuditLog::Helpers do
 
   it "resets actor and reason after the block" do
     AuditLog::Helpers.with_context(actor: user, reason: "Temporary action") do
-      # Inside block — context is present
+      expect(AuditLog::Context.actor).to eq(user)
+      expect(AuditLog::Context.reason).to eq("Temporary action")
     end
 
     expect(AuditLog::Context.actor).to be_nil
@@ -22,7 +24,7 @@ RSpec.describe AuditLog::Helpers do
 
   it "does not raise if no actor or reason is provided" do
     expect {
-      AuditLog::Helpers.with_context {} # No args
+      AuditLog::Helpers.with_context {}
     }.not_to raise_error
   end
 end

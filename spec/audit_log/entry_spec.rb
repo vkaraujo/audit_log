@@ -1,9 +1,9 @@
-# spec/audit_log/entry_spec.rb
+# frozen_string_literal: true
+
 require "spec_helper"
 
 RSpec.describe AuditLog::Entry do
   before do
-    # Create the audit_log_entries table in memory
     ActiveRecord::Schema.define do
       suppress_messages do
         create_table :audit_log_entries, force: true do |t|
@@ -25,7 +25,7 @@ RSpec.describe AuditLog::Entry do
       auditable_type: "Post",
       auditable_id: 1,
       action: "update",
-      changed_data: { "title" => ["Old", "New"] }
+      changed_data: { "title" => %w[Old New] }
     )
 
     expect(entry).to be_valid
@@ -35,11 +35,10 @@ RSpec.describe AuditLog::Entry do
     entry = described_class.new(
       auditable_type: "Post",
       auditable_id: 1,
-      changed_data: { "title" => ["Old", "New"] }
+      changed_data: { "title" => %w[Old New] }
     )
 
     expect(entry).not_to be_valid
     expect(entry.errors[:action]).to include("can't be blank")
   end
 end
-

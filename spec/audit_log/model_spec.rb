@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require "spec_helper"
 
 RSpec.describe AuditLog::Model do
@@ -7,7 +8,6 @@ RSpec.describe AuditLog::Model do
   let(:audit_except) { [] }
 
   before do
-    # Set up tables
     ActiveRecord::Schema.define do
       suppress_messages do
         create_table :test_models, force: true do |t|
@@ -74,7 +74,7 @@ RSpec.describe AuditLog::Model do
 
       entry = AuditLog::Entry.last
       expect(entry.action).to eq("update")
-      expect(entry.changed_data["name"]).to eq(["Before", "After"])
+      expect(entry.changed_data["name"]).to eq(%w[Before After])
     end
 
     it "creates an audit log on destroy" do
@@ -103,7 +103,7 @@ RSpec.describe AuditLog::Model do
       }.to change { AuditLog::Entry.count }.by(1)
 
       entry = AuditLog::Entry.last
-      expect(entry.changed_data).to include("status" => ["active", "inactive"])
+      expect(entry.changed_data).to include("status" => %w[active inactive])
       expect(entry.changed_data).not_to include("name")
     end
   end
@@ -121,7 +121,7 @@ RSpec.describe AuditLog::Model do
       }.to change { AuditLog::Entry.count }.by(1)
 
       entry = AuditLog::Entry.last
-      expect(entry.changed_data).to include("name" => ["Name", "Changed"])
+      expect(entry.changed_data).to include("name" => %w[Name Changed])
       expect(entry.changed_data).not_to include("status")
     end
   end
@@ -135,9 +135,8 @@ RSpec.describe AuditLog::Model do
       model = TestModel.create!(name: "Keep", status: "unchanged").reload
 
       expect {
-        model.update!(status: "changed") # status is not tracked
+        model.update!(status: "changed")
       }.not_to change { AuditLog::Entry.count }
     end
   end
 end
-
